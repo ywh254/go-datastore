@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"errors"
+	"io"
 	"time"
 
 	query "github.com/ipfs/go-datastore/query"
@@ -33,6 +34,7 @@ should be checked by callers.
 type Datastore interface {
 	Read
 	Write
+	io.Closer
 }
 
 // Write is the write-side of the Datastore interface.
@@ -169,7 +171,8 @@ type TTLDatastore interface {
 // Commit has been made. Likewise, transactions can be aborted by calling
 // Discard before a successful Commit has been made.
 type Txn interface {
-	Datastore
+	Read
+	Write
 
 	// Commit finalizes a transaction, attempting to commit it to the Datastore.
 	// May return an error if the transaction has gone stale. The presence of an
